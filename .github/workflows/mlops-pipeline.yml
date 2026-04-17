@@ -1,4 +1,4 @@
-﻿name: MLOps CI/CD Pipeline
+name: MLOps CI/CD Pipeline
 
 on:
   push:
@@ -22,9 +22,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: -pip-
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
-            -pip-
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
@@ -59,20 +59,20 @@ jobs:
           context: .
           push: false
           load: true
-          tags: ml-inference:
+          tags: ml-inference:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Test Docker image
         run: |
-          docker run -d -p 8000:8000 --name test-container ml-inference:
+          docker run -d -p 8000:8000 --name test-container ml-inference:${{ github.sha }}
           sleep 5
           curl --retry 5 --retry-delay 2 http://localhost:8000/health
           docker stop test-container
 
       - name: Save image as artifact
         run: |
-          docker save ml-inference: -o ml-inference.tar.gz
+          docker save ml-inference:${{ github.sha }} -o ml-inference.tar.gz
 
       - name: Upload Docker image artifact
         uses: actions/upload-artifact@v4
@@ -92,9 +92,9 @@ jobs:
       - name: Simulate deployment
         run: |
           echo "===== 模拟生产环境部署 ====="
-          echo "部署版本: "
-          echo "部署时间: 04/18/2026 02:06:35"
-          echo "镜像大小: "
+          echo "部署版本: ${{ github.sha }}"
+          echo "部署时间: $(date)"
+          echo "镜像大小: $(ls -lh ml-inference.tar.gz | awk '{print $5}')"
           echo ""
           echo "部署完成 - 服务已上线"
           echo "迭代周期: 从代码提交到部署完成约 2 分钟"
