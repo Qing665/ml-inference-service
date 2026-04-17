@@ -1,0 +1,1 @@
+session_duration,product_views,cart_adds,past_purchases,member_level,device_type

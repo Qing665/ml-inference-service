@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  inference-api:
+    build: .
+    container_name: ml-inference
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=info
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    # 健康检查（调整 test 命令）
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/venv/bin/python -c \"import requests; requests.get('http://localhost:8000/health')\" || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    # 自动重启策略
+    restart: unless-stopped
