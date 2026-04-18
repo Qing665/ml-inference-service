@@ -59,16 +59,11 @@ jobs:
           sudo systemctl restart docker
 
       - name: Build Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: false
-          load: true
-          tags: ml-inference:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          build-args: |
-            BASE_REGISTRY=crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/
+        run: |
+          docker build \
+            --build-arg BASE_REGISTRY="crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/" \
+            -t ml-inference:${{ github.sha }} \
+            .
 
       - name: Test Docker image
         run: |
