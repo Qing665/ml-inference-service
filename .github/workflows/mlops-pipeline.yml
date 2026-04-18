@@ -58,7 +58,7 @@ jobs:
           echo '{"registry-mirrors": ["https://docker.1ms.run"]}' | sudo tee /etc/docker/daemon.json
           sudo systemctl restart docker
 
-            - name: Build Docker image
+      - name: Build Docker image
         run: |
           docker build \
             --build-arg BASE_REGISTRY="" \
