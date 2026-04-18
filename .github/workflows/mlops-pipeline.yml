@@ -67,6 +67,8 @@ jobs:
           tags: ml-inference:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            BASE_REGISTRY=crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/
 
       - name: Test Docker image
         run: |

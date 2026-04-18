@@ -1,5 +1,9 @@
+# ==================== 定义构建参数 ====================
+# 默认留空，使用 Docker Hub；需要阿里云时传入 "crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/"
+ARG BASE_REGISTRY=""
+
 # ==================== 第一阶段：构建阶段 ====================
-FROM crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/python:3.9-slim AS builder
+FROM ${BASE_REGISTRY}python:3.9-slim AS builder
 
 WORKDIR /app
 
@@ -17,7 +21,7 @@ RUN python -m venv /opt/venv && \
     /opt/venv/bin/pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 # ==================== 第二阶段：运行阶段 ====================
-FROM crpi-8vw2fragz599b40r.cn-hangzhou.personal.cr.aliyuncs.com/hhq-docker/python:3.9-slim AS runtime
+FROM ${BASE_REGISTRY}python:3.9-slim AS runtime
 
 WORKDIR /app
 
